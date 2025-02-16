@@ -1,11 +1,17 @@
 package me.i.springapi.api.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class User {
-
+    @NotBlank
+    @NotNull
     private String login;
+    @NotBlank
+    @NotNull
     private String password;
     private String status;
     private String date;

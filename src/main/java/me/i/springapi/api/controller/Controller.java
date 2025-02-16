@@ -1,5 +1,6 @@
 package me.i.springapi.api.controller;
 
+import jakarta.validation.Valid;
 import me.i.springapi.api.model.User;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class Controller {
     @PostMapping
     @Async
     @ResponseBody
-    public CompletableFuture<ResponseEntity<User>> post(@RequestBody User user) {
+    public CompletableFuture<ResponseEntity<User>> post(@Valid @RequestBody User user) {
         try {
             Thread.sleep(responseDelayTime());
         } catch (InterruptedException e) {
