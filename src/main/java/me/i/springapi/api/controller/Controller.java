@@ -1,8 +1,6 @@
 package me.i.springapi.api.controller;
 
-import me.i.springapi.api.model.GetOutput;
-import me.i.springapi.api.model.PostInput;
-import me.i.springapi.api.model.PostOutput;
+import me.i.springapi.api.model.User;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,26 +24,33 @@ public class Controller {
     @GetMapping
     @Async
     @ResponseBody
-    public CompletableFuture<ResponseEntity<GetOutput>> get() {
+    public CompletableFuture<ResponseEntity<User>> get() {
         try {
             Thread.sleep(responseDelayTime());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ResponseEntity<GetOutput> response = new ResponseEntity<>(new GetOutput("Login1", "ok"), HttpStatus.OK);
+        User user = new User();
+        user.setLogin("Login1");
+        user.setStatus("ok");
+        ResponseEntity<User> response = new ResponseEntity<>(user, HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
     }
+
 
     @PostMapping
     @Async
     @ResponseBody
-    public CompletableFuture<ResponseEntity<PostOutput>> post(@RequestBody PostInput postInput) {
+    public CompletableFuture<ResponseEntity<User>> post(@RequestBody User user) {
         try {
             Thread.sleep(responseDelayTime());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ResponseEntity<PostOutput> response = new ResponseEntity<>(new PostOutput(postInput.getLogin(), postInput.getPassword(), LocalDateTime.now()), HttpStatus.OK);
+        user.setDate(LocalDateTime.now());
+        ResponseEntity<User> response = new ResponseEntity<>(user, HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
+
+
     }
 }
