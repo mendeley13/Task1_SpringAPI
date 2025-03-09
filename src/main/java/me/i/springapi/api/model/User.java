@@ -3,8 +3,7 @@ package me.i.springapi.api.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.sql.Timestamp;
 
 public class User {
     @NotBlank
@@ -13,13 +12,15 @@ public class User {
     @NotBlank
     @NotNull
     private String password;
-    private String status;
-    private String date;
+    private String email;
+    private Timestamp date;
 
 
-    public User(String login, String password) {
+    public User(String login, String password, String status, String email, Timestamp date) {
         this.login = login;
         this.password = password;
+        this.email = email;
+        this.date = date;
     }
 
     public User() {
@@ -33,11 +34,11 @@ public class User {
         return password;
     }
 
-    public String getStatus() {
-        return status;
+    public String getEmail() {
+        return email;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
@@ -49,14 +50,11 @@ public class User {
         this.password = password;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setDate(LocalDateTime date) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.date = dtf.format(date);
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
-
-
 }
