@@ -5,11 +5,11 @@ import me.i.springapi.api.model.User;
 import java.sql.*;
 
 public class DataBaseWorker {
-    private final String url = "jdbc:postgresql://127.0.0.1:5432/db1";
+    private final String url = "jdbc:postgresql://10.0.2.15:5433/db1";
     private final String username = "postgres";
     private final String password = "postgrespassword";
 
-    public User selectQuery(String login)  {
+    public User selectQuery(String login) {
         String query = "select * from table1 t1 join table2 t2 using (login) where login='" + login + "';";
         Connection conn = null;
         Statement stmt = null;
@@ -29,26 +29,15 @@ public class DataBaseWorker {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (conn != null) {
-                try {
+            try {
+                if (conn != null)
                     conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (stmt != null) {
-                try {
+                if (stmt != null)
                     stmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (rs != null) {
-                try {
+                if (rs != null)
                     rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return user;
