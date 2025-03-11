@@ -5,7 +5,7 @@ import me.i.springapi.api.model.User;
 import java.sql.*;
 
 public class DataBaseWorker {
-    private final String url = "jdbc:postgresql://localhost:5433/db1";
+    private final String url = "jdbc:postgresql://10.0.2.15:5433/db1";
     private final String username = "postgres";
     private final String password = "postgrespassword";
 

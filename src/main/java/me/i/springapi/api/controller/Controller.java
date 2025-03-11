@@ -7,7 +7,6 @@ import me.i.springapi.api.service.DataBaseException;
 import me.i.springapi.api.service.FileWorker;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +29,13 @@ public class Controller {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<User> get(@RequestParam("login") String login) {
+    public ResponseEntity<User> getFromDB(@RequestParam("login") String login) {
         ResponseEntity<User> responseEntity = null;
         try {
             Thread.sleep(responseDelayTime());
             User user = dbWorker.selectQuery(login);
             responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
-fileWorker.write(String.valueOf(responseEntity.getBody()));
+            fileWorker.write(user);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (DataBaseException | SQLException e) {
@@ -44,6 +43,22 @@ fileWorker.write(String.valueOf(responseEntity.getBody()));
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
+    }
+
+    @GetMapping("/file")
+    @ResponseBody
+    public ResponseEntity<User> getFromFile() {
+        ResponseEntity<User> responseEntity = null;
+        User user = new User();
+        FileWorker fileWorker = new FileWorker();
+        int stringNumber = (int) (Math.random() * 10);
+        try {
+            Thread.sleep(responseDelayTime());
+            user = fileWorker.read(stringNumber);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
