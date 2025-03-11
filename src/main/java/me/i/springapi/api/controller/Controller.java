@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import me.i.springapi.api.service.DataBaseWorker;
 import me.i.springapi.api.model.User;
 import me.i.springapi.api.service.DataBaseException;
+import me.i.springapi.api.service.FileWorker;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ public class Controller {
     }
 
     DataBaseWorker dbWorker = new DataBaseWorker();
+    FileWorker fileWorker = new FileWorker();
 
     @GetMapping
     @ResponseBody
@@ -34,9 +36,10 @@ public class Controller {
             Thread.sleep(responseDelayTime());
             User user = dbWorker.selectQuery(login);
             responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
+fileWorker.write(String.valueOf(responseEntity.getBody()));
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (DataBaseException e) {
+        } catch (DataBaseException | SQLException e) {
             e.printStackTrace();
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -58,6 +61,6 @@ public class Controller {
             e.printStackTrace();
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-            return responseEntity;
+        return responseEntity;
     }
 }
