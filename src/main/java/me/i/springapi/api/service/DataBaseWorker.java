@@ -9,9 +9,8 @@ public class DataBaseWorker {
     private final String username = "postgres";
     private final String password = "postgrespassword";
 
-    public User selectQuery(String login) throws DataBaseException {
-        String queryCheckIfLoginExists = "select count(login) from public.table1 where login ='" + login + "';";
-        String querySelect = "select * from table1 t1 join table2 t2 using (login) where login='" + login + "';";
+    public User selectQuery(String login) throws DataBaseException, SQLException {
+        String query = "select * from table1 t1 join table2 t2 using (login) where login='" + login + "';";
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -19,19 +18,15 @@ public class DataBaseWorker {
         try {
             connection = DriverManager.getConnection(url, username, password);
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(queryCheckIfLoginExists);
+            resultSet = statement.executeQuery(query);
             resultSet.next();
-            if (resultSet.getInt("count") == 0)
+            if (resultSet.getString("login") == null)
                 throw new DataBaseException("There is no such user in the database.");
-            resultSet = statement.executeQuery(querySelect);
-            resultSet.next();
             user = new User(
                     resultSet.getString("login"),
                     resultSet.getString("password"),
                     resultSet.getString("email"),
                     resultSet.getTimestamp("date"));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             try {
                 if (connection != null)
