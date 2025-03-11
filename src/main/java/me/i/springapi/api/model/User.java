@@ -15,8 +15,7 @@ public class User {
     private String email;
     private Timestamp date;
 
-
-    public User(String login, String password, String status, String email, Timestamp date) {
+    public User(String login, String password, String email, Timestamp date) {
         this.login = login;
         this.password = password;
         this.email = email;

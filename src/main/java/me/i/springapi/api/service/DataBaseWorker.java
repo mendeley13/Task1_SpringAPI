@@ -9,33 +9,37 @@ public class DataBaseWorker {
     private final String username = "postgres";
     private final String password = "postgrespassword";
 
-    public User selectQuery(String login) {
-        String query = "select * from table1 t1 join table2 t2 using (login) where login='" + login + "';";
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+    public User selectQuery(String login) throws DataBaseException {
+        String queryCheckIfLoginExists = "select count(login) from public.table1 where login ='" + login + "';";
+        String querySelect = "select * from table1 t1 join table2 t2 using (login) where login='" + login + "';";
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         User user = new User();
         try {
-            conn = DriverManager.getConnection(url, username, password);
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(query);
-            rs.next();
+            connection = DriverManager.getConnection(url, username, password);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(queryCheckIfLoginExists);
+            resultSet.next();
+            if (resultSet.getInt("count") == 0)
+                throw new DataBaseException("There is no such user in the database.");
+            resultSet = statement.executeQuery(querySelect);
+            resultSet.next();
             user = new User(
-                    rs.getString("login"),
-                    rs.getString("password"),
-                    "",
-                    rs.getString("email"),
-                    rs.getTimestamp("date"));
+                    resultSet.getString("login"),
+                    resultSet.getString("password"),
+                    resultSet.getString("email"),
+                    resultSet.getTimestamp("date"));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (conn != null)
-                    conn.close();
-                if (stmt != null)
-                    stmt.close();
-                if (rs != null)
-                    rs.close();
+                if (connection != null)
+                    connection.close();
+                if (statement != null)
+                    statement.close();
+                if (resultSet != null)
+                    resultSet.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -43,19 +47,17 @@ public class DataBaseWorker {
         return user;
     }
 
-    public int insertQuery(User user) {
+    public int insertQuery(User user) throws SQLException {
         String query = "insert into table1(login, password, date) values(?,?,?);\ninsert into table2(login, email) values(?,?)";
         int rowsAdded = 0;
-        try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement stmt = conn.prepareStatement(query);) {
-            stmt.setString(1, user.getLogin());
-            stmt.setString(2, user.getPassword());
-            stmt.setTimestamp(3, user.getDate());
-            stmt.setString(4, user.getLogin());
-            stmt.setString(5, user.getEmail());
-            rowsAdded = stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(query);) {
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getPassword());
+            statement.setTimestamp(3, user.getDate());
+            statement.setString(4, user.getLogin());
+            statement.setString(5, user.getEmail());
+            rowsAdded = statement.executeUpdate();
         }
         return rowsAdded;
     }
