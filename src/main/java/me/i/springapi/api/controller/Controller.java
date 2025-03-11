@@ -6,7 +6,6 @@ import me.i.springapi.api.model.User;
 import me.i.springapi.api.service.DataBaseException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class Controller {
             responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (DataBaseException e) {
+        } catch (DataBaseException | SQLException e) {
             e.printStackTrace();
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -58,6 +57,6 @@ public class Controller {
             e.printStackTrace();
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-            return responseEntity;
+        return responseEntity;
     }
 }
